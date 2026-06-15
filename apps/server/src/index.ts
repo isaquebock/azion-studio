@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { env } from "./env.js";
 import { chatHandler } from "./routes/chat.js";
+import { applyHandler, topologyHandler } from "./routes/ops.js";
 import { preloadTools } from "./mcp-tools.js";
 
 const app = express();
@@ -23,10 +24,12 @@ app.use((req, res, next) => {
 });
 
 app.get("/health", (_req, res) => {
-  res.json({ ok: true, name: "azion-chat-server" });
+  res.json({ ok: true, name: "azion-studio-server" });
 });
 
 app.post("/api/chat", chatHandler);
+app.get("/api/ops/topology", topologyHandler);
+app.post("/api/ops/apply", applyHandler);
 
 app.listen(env.port, () => {
   console.log(`[server] listening on http://localhost:${env.port}`);

@@ -1,5 +1,5 @@
 {
-  "name": "@azion-chat/web",
+  "name": "@azion-studio/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,9 +10,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^3.0.0",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-scroll-area": "^1.2.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@xyflow/react": "^12.11.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.453.0",
