@@ -7,6 +7,8 @@ export type EdgeAppData = {
   id?: number;
   name: string;
   delivery_protocol?: "http" | "http,https";
+  /** Full untouched API payload (read-only, for the inspector's Raw tab). */
+  raw?: unknown;
 };
 
 export type DomainData = {
@@ -16,6 +18,7 @@ export type DomainData = {
   cnames?: string[];
   edge_application_id: number | string; // string while it's still a local placeholder
   digital_certificate_id?: number | null;
+  raw?: unknown;
 };
 
 export type EdgeFunctionData = {
@@ -24,6 +27,7 @@ export type EdgeFunctionData = {
   code: string;
   language?: "javascript";
   initiator_type?: "edge_application" | "edge_firewall";
+  raw?: unknown;
 };
 
 export type RuleData = {
@@ -36,6 +40,7 @@ export type RuleData = {
   // and round-trips them. The form only edits name/description.
   criteria?: unknown;
   behaviors?: unknown;
+  raw?: unknown;
 };
 
 export type ResourceData =

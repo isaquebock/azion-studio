@@ -33,12 +33,16 @@ function inputClasses() {
   );
 }
 
+type Tab = "form" | "raw";
+
 export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props) {
   const open = node != null;
   const [draft, setDraft] = useState<WorkingNode | null>(node);
+  const [tab, setTab] = useState<Tab>("form");
 
   useEffect(() => {
     setDraft(node);
+    setTab("form");
   }, [node]);
 
   if (!open || !draft) {
@@ -91,6 +95,38 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
             </Dialog.Close>
           </header>
 
+          <nav className="flex gap-1 border-b border-border px-3 py-2">
+            {(["form", "raw"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-xs transition-colors",
+                  tab === t
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                )}
+              >
+                {t === "form" ? "Form" : "Raw JSON"}
+              </button>
+            ))}
+          </nav>
+
+          {tab === "raw" ? (
+            <div className="flex-1 overflow-y-auto px-3 py-3">
+              <pre className="rounded-md border border-border bg-muted/40 p-3 font-mono text-[11px] leading-relaxed text-foreground/90">
+                {JSON.stringify(
+                  (draft.data as { raw?: unknown }).raw ?? draft.data,
+                  null,
+                  2,
+                )}
+              </pre>
+              <p className="mt-2 px-1 text-[11px] text-muted-foreground">
+                Read-only. Reflete o payload bruto vindo da API Azion no último load.
+              </p>
+            </div>
+          ) : (
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <div>
               <Label>Nome</Label>
@@ -206,6 +242,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
               </>
             )}
           </div>
+          )}
 
           <footer className="flex items-center gap-2 border-t border-border bg-muted/30 px-5 py-3">
             {isExisting && (

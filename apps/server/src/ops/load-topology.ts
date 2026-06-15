@@ -66,6 +66,7 @@ function toEdgeApp(raw: unknown): EdgeAppData {
     id: Number(r.id),
     name: String(r.name ?? ""),
     delivery_protocol: r.delivery_protocol as EdgeAppData["delivery_protocol"],
+    raw,
   };
 }
 
@@ -79,6 +80,7 @@ function toDomain(raw: unknown): DomainData {
     edge_application_id: Number(r.edge_application_id ?? r.application_id ?? 0),
     digital_certificate_id:
       r.digital_certificate_id != null ? Number(r.digital_certificate_id) : null,
+    raw,
   };
 }
 
@@ -90,6 +92,7 @@ function toFunction(raw: unknown): EdgeFunctionData {
     code: String(r.code ?? ""),
     language: (r.language as EdgeFunctionData["language"]) ?? "javascript",
     initiator_type: r.initiator_type as EdgeFunctionData["initiator_type"],
+    raw,
   };
 }
 
@@ -103,6 +106,7 @@ function toRule(raw: unknown, application_id: number, phase: "request" | "respon
     description: r.description ? String(r.description) : undefined,
     criteria: r.criteria,
     behaviors: r.behaviors,
+    raw,
   };
 }
 
