@@ -153,13 +153,39 @@ export function InteractiveMode() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [applyOpen, setApplyOpen] = useState(false);
 
-  // Seed working tree from snapshot on (re)load.
+  // Seed working tree from snapshot on (re)load. Layout happens here so the
+  // first render already has dagre-assigned positions — never (0,0). This
+  // also avoids a race where a second effect would overwrite mid-stream.
   useEffect(() => {
-    if (topology) {
-      setWorkingTree(topologyToWorkingTree(topology));
-      setDeletedRemote([]);
-      setSelectedId(null);
+    if (!topology) return;
+    const raw = topologyToWorkingTree(topology);
+    // Build the same node/edge shape the canvas will consume; dagre only
+    // needs id + connectivity, so any consistent ids work.
+    const tmpNodes: Node[] = raw.map((n) => ({
+      id: n.id,
+      type: n.kind,
+      position: { x: 0, y: 0 },
+      data: {},
+    }));
+    const tmpEdges: Edge[] = [];
+    for (const n of raw) {
+      if (n.kind === "domain") {
+        const t = String((n.data as DomainData).edge_application_id ?? "");
+        if (t) tmpEdges.push({ id: `e-${n.id}-${t}`, source: t, target: n.id });
+      }
+      if (n.kind === "rule") {
+        const t = String((n.data as RuleData).application_id ?? "");
+        if (t) tmpEdges.push({ id: `e-${n.id}-${t}`, source: t, target: n.id });
+      }
     }
+    const laid = layoutGraph(tmpNodes, tmpEdges);
+    const positioned = raw.map((n) => {
+      const m = laid.find((l) => l.id === n.id);
+      return m ? { ...n, position: m.position } : n;
+    });
+    setWorkingTree(positioned);
+    setDeletedRemote([]);
+    setSelectedId(null);
   }, [topology]);
 
   // Build the React Flow node/edge model from the working tree.
@@ -191,20 +217,6 @@ export function InteractiveMode() {
     }
     return { nodes: ns, edges: es };
   }, [workingTree, topology]);
-
-  // Auto-layout on first ready render; preserves user-dragged positions later.
-  const [hasLaidOut, setHasLaidOut] = useState(false);
-  useEffect(() => {
-    if (status !== "ready" || hasLaidOut || workingTree.length === 0) return;
-    const laid = layoutGraph(nodes, edges);
-    setWorkingTree((prev) =>
-      prev.map((n) => {
-        const match = laid.find((l) => l.id === n.id);
-        return match ? { ...n, position: match.position } : n;
-      }),
-    );
-    setHasLaidOut(true);
-  }, [status, hasLaidOut, workingTree.length, nodes, edges]);
 
   /**
    * React Flow dispatches a stream of changes during drag. We only care about
@@ -353,13 +365,11 @@ export function InteractiveMode() {
     if (changeSet.length > 0) {
       if (!confirm(`Descartar ${changeSet.length} mudança(s) pendente(s)?`)) return;
     }
-    setHasLaidOut(false);
     void reload();
   }, [changeSet.length, reload]);
 
   const onApplySuccess = useCallback(() => {
     setApplyOpen(false);
-    setHasLaidOut(false);
     void reload();
   }, [reload]);
 
