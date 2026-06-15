@@ -9,7 +9,7 @@ export const env = {
   openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
   openrouterBaseUrl: process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1",
   openrouterSiteUrl: process.env.OPENROUTER_SITE_URL ?? "",
-  openrouterAppName: process.env.OPENROUTER_APP_NAME ?? "Azion Chat",
+  openrouterAppName: process.env.OPENROUTER_APP_NAME ?? "Azion Studio",
   defaultModel: process.env.DEFAULT_MODEL ?? "google/gemini-2.5-flash-lite",
   mcpServerUrl: process.env.MCP_SERVER_URL ?? "http://localhost:3002/mcp",
   port: Number(process.env.SERVER_PORT ?? 3001),

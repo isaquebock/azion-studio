@@ -1,6 +1,6 @@
-# Azion Chat
+# Azion Studio
 
-Chat open source que opera a plataforma Azion via linguagem natural, usando MCP (Model Context Protocol) e function calling.
+Estúdio open source que opera a plataforma Azion via linguagem natural, usando MCP (Model Context Protocol) e function calling.
 
 ## Stack
 

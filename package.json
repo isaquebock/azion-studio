@@ -1,14 +1,14 @@
 {
-  "name": "azion-chat",
+  "name": "azion-studio",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "pnpm -r --parallel --stream dev",
-    "dev:web": "pnpm --filter @azion-chat/web dev",
-    "dev:server": "pnpm --filter @azion-chat/server dev",
-    "dev:mcp": "pnpm --filter @azion-chat/mcp dev",
+    "dev:web": "pnpm --filter @azion-studio/web dev",
+    "dev:server": "pnpm --filter @azion-studio/server dev",
+    "dev:mcp": "pnpm --filter @azion-studio/mcp dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck"
   },

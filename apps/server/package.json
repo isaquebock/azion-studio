@@ -1,5 +1,5 @@
 {
-  "name": "@azion-chat/server",
+  "name": "@azion-studio/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",

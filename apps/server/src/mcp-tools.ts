@@ -8,7 +8,7 @@ type Tool = OpenAI.Chat.Completions.ChatCompletionTool;
 let cached: Promise<Tool[]> | null = null;
 
 async function fetchTools(): Promise<Tool[]> {
-  const mcp = new McpClient({ name: "azion-chat-host-bootstrap", version: "0.1.0" });
+  const mcp = new McpClient({ name: "azion-studio-host-bootstrap", version: "0.1.0" });
   const transport = new StreamableHTTPClientTransport(new URL(env.mcpServerUrl), {
     // O MCP server exige Authorization, mas tools/list não usa o token (apenas tools/call usa).
     // Qualquer string serve apenas para passar o middleware.
@@ -51,7 +51,7 @@ export function preloadTools(): void {
 }
 
 export function createMcpClient(azionToken: string) {
-  const mcp = new McpClient({ name: "azion-chat-host", version: "0.1.0" });
+  const mcp = new McpClient({ name: "azion-studio-host", version: "0.1.0" });
   const transport = new StreamableHTTPClientTransport(new URL(env.mcpServerUrl), {
     requestInit: { headers: { Authorization: `Token ${azionToken}` } },
   });
