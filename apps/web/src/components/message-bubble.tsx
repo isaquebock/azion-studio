@@ -53,8 +53,8 @@ function MessageBubbleImpl({
     <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-          isUser ? "bg-primary text-primary-foreground" : "border bg-muted/40",
+          "max-w-[85%] rounded-lg px-6 py-4 text-sm",
+          isUser ? "bg-primary text-primary-foreground" : "border border-neutral-800 bg-muted",
         )}
       >
         {message.text ? (

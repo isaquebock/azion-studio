@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getToken } from "@/lib/token-store";
+import { cn } from "@/lib/utils";
 import { MessageBubble, type ChatMessage } from "./message-bubble";
 import { ConfirmDialog, type ConfirmRequest } from "./confirm-dialog";
 
@@ -16,6 +17,18 @@ function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+/**
+ * Single-component chat surface. Renders in two visual modes driven purely by
+ * `messages.length`:
+ *
+ *  - **empty**: greeting + input centered vertically (ChatGPT-like landing).
+ *  - **conversation**: scrollable history fills available space, input pinned
+ *    to the bottom of the column.
+ *
+ * The streaming pipeline (SSE reader, rAF-coalesced text flush, memoized
+ * bubbles, `isStreaming` flag) is unchanged from the previous revision —
+ * only the surrounding layout was reworked.
+ */
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -59,9 +72,12 @@ export function ChatInterface() {
     });
   }, [messages]);
 
-  useEffect(() => () => {
-    if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    },
+    [],
+  );
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -70,7 +86,7 @@ export function ChatInterface() {
 
     const token = await getToken();
     if (!token) {
-      alert("Configure o Personal Token primeiro.");
+      alert("Configure o Personal Token primeiro (avatar no canto superior direito).");
       return;
     }
 
@@ -119,7 +135,11 @@ export function ChatInterface() {
           const json = dataLine.slice(5).trim();
           if (!json) continue;
           let ev: SseEvent;
-          try { ev = JSON.parse(json) as SseEvent; } catch { continue; }
+          try {
+            ev = JSON.parse(json) as SseEvent;
+          } catch {
+            continue;
+          }
 
           if (ev.type === "text") {
             const prev = pendingTextRef.current.get(assistantMsg.id) ?? "";
@@ -191,39 +211,65 @@ export function ChatInterface() {
     }
   }
 
-  return (
-    <div className="flex h-full flex-col">
-      <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-        {messages.length === 0 ? (
-          <div className="mx-auto max-w-md py-12 text-center text-sm text-muted-foreground">
-            Pergunte algo sobre sua conta Azion. Ex.: <em>“liste minhas edge applications”</em>.
-          </div>
-        ) : (
-          messages.map((m) => (
-            <MessageBubble key={m.id} message={m} isStreaming={m.id === streamingId} />
-          ))
-        )}
+  const isEmpty = messages.length === 0;
+
+  // Composer is the same in both modes; layout is what changes.
+  const composer = (
+    <form onSubmit={send} className={cn("w-full", isEmpty ? "" : "")}>
+      <div className="flex items-end gap-2 border border-border bg-muted p-2 focus-within:ring-2 focus-within:ring-primary/30">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Pergunte algo sobre sua conta Azion..."
+          disabled={isStreaming}
+          className="flex-1 bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-60"
+        />
+        <button
+          type="submit"
+          disabled={isStreaming || !input.trim()}
+          className=" bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-40"
+        >
+          {isStreaming ? "…" : "Enviar"}
+        </button>
       </div>
+    </form>
+  );
 
-      <form onSubmit={send} className="border-t p-3">
-        <div className="flex gap-2">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ex: liste minhas edge applications..."
-            disabled={isStreaming}
-            className="flex-1 rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
-          />
-          <button
-            type="submit"
-            disabled={isStreaming || !input.trim()}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
-          >
-            {isStreaming ? "…" : "Enviar"}
-          </button>
+  if (isEmpty) {
+    // Centered landing: greeting + composer stacked, vertically centered.
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center px-4">
+        <div className="w-full max-w-[720px]">
+          <h1 className="mb-8 text-center text-3xl font-semibold tracking-tight sm:text-4xl">
+            Como posso ajudar com sua{" "}
+            <span className="text-primary">conta Azion</span>?
+          </h1>
+          {composer}
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Ex.: <em>“liste minhas edge applications”</em>
+          </p>
         </div>
-      </form>
+        <ConfirmDialog request={confirmReq} />
+      </div>
+    );
+  }
 
+  // Conversation mode: scrollable history + pinned composer.
+  return (
+    <div className="flex h-full w-full flex-col items-center">
+      <div className="flex h-full w-full max-w-[720px] flex-col">
+        <div
+          ref={scrollerRef}
+          className="flex-1 space-y-3 overflow-y-auto px-4 py-6"
+        >
+          {messages.map((m) => (
+            <MessageBubble key={m.id} message={m} isStreaming={m.id === streamingId} />
+          ))}
+        </div>
+        <div className="border-border bg-background px-6 py-4">
+          {composer}
+        </div>
+      </div>
       <ConfirmDialog request={confirmReq} />
     </div>
   );
