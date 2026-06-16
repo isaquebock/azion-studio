@@ -1,9 +1,15 @@
 import type { Request, Response } from "express";
-import { chat, maxIterations, toolDefinition, toServerSentEventsResponse } from "@tanstack/ai";
+import {
+  chat,
+  chatParamsFromRequestBody,
+  maxIterations,
+  toolDefinition,
+  toServerSentEventsResponse,
+} from "@tanstack/ai";
 import type { JSONSchema } from "@tanstack/ai";
 import { createOpenRouterText } from "@tanstack/ai-openrouter";
 import { env } from "../env.js";
-import { callToolLogged, createMcpClient, getTools } from "../mcp-tools.js";
+import { callToolOneShot, getTools } from "../mcp-tools.js";
 
 const SYSTEM_PROMPT = `Você é um assistente especializado na plataforma Azion Edge Computing.
 
@@ -40,18 +46,11 @@ REGRA DE EXECUÇÃO PÓS-CONFIRMAÇÃO (crítica):
 - Se faltar algum parâmetro obrigatório, pergunte só o que falta — não reabra a discussão
   sobre o que já foi combinado.`;
 
-type IncomingMessage = { role: "user" | "assistant"; content: string };
-
 export async function chatHandler(req: Request, res: Response) {
   const token = req.header("x-azion-token");
-  const messages = (req.body?.messages ?? []) as IncomingMessage[];
 
   if (!token) {
     res.status(401).json({ error: "X-Azion-Token ausente" });
-    return;
-  }
-  if (!Array.isArray(messages) || messages.length === 0) {
-    res.status(400).json({ error: "messages vazio" });
     return;
   }
   if (!env.openrouterApiKey) {
@@ -59,21 +58,30 @@ export async function chatHandler(req: Request, res: Response) {
     return;
   }
 
-  const { mcp, transport } = createMcpClient(token);
-  let closed = false;
-  const close = async () => {
-    if (closed) return;
-    closed = true;
-    try { await transport.close(); } catch { /* noop */ }
-  };
-  res.on("close", () => { void close(); });
+  // `useChat` from @tanstack/ai-react POSTs the conversation in AG-UI's
+  // RunAgentInput shape, where messages are UIMessages with `parts` (text,
+  // tool-call, tool-result, …) — NOT a plain `{role, content}` array.
+  // `chatParamsFromRequestBody` validates the shape and normalizes the
+  // messages so the assistant's tool_call / tool_result history round-trips
+  // back to the LLM with the right tool_call_id linkage. Without this step,
+  // multi-turn chats break with "Tool message must have either name or
+  // tool_call_id" on the second user turn.
+  let params;
+  try {
+    params = await chatParamsFromRequestBody(req.body);
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+    return;
+  }
 
   try {
-    const [mcpTools] = await Promise.all([getTools(), mcp.connect(transport)]);
+    const mcpTools = await getTools();
 
-    // Bridge each MCP tool into a TanStack AI server tool that calls back into the
-    // user-scoped MCP client. JSON Schema is forwarded verbatim from the MCP catalog,
-    // so the LLM sees the same contract it always saw.
+    // Bridge each MCP tool into a TanStack AI server tool. Each call opens a
+    // fresh MCP client+transport via `callToolOneShot` — see the comment on
+    // that helper for why we don't reuse a single connection across the
+    // agent loop. The user's token is captured in closure here, so the
+    // chat-route header is the single source of truth for auth.
     const tools = mcpTools.map((t) =>
       toolDefinition({
         name: t.name,
@@ -81,7 +89,7 @@ export async function chatHandler(req: Request, res: Response) {
         inputSchema: t.inputSchema as JSONSchema,
       }).server(async (args) => {
         const input = (args && typeof args === "object" ? args : {}) as Record<string, unknown>;
-        const result = await callToolLogged(mcp, t.name, input);
+        const result = await callToolOneShot(token, t.name, input);
         return result.content ?? result;
       }),
     );
@@ -96,7 +104,7 @@ export async function chatHandler(req: Request, res: Response) {
 
     const stream = chat({
       adapter,
-      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      messages: params.messages,
       tools,
       systemPrompts: [SYSTEM_PROMPT],
       agentLoopStrategy: maxIterations(4),
@@ -123,7 +131,6 @@ export async function chatHandler(req: Request, res: Response) {
       res.status(500).json({ error: (err as Error).message });
     }
   } finally {
-    await close();
     res.end();
   }
 }

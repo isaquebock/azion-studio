@@ -75,6 +75,35 @@ export async function resolveToolName(requested: string): Promise<string | null>
   return candidate ?? null;
 }
 
+/**
+ * One-shot tool invocation: opens a fresh MCP client+transport for THIS call
+ * only, runs `tools/call`, and tears the transport down in `finally`.
+ *
+ * Used by the chat route, where the LLM may emit multiple tool_calls in a
+ * single agent loop. Reusing a single transport for N calls against the
+ * stateless MCP server (`sessionIdGenerator: undefined`) leaves the second
+ * `callTool` racing a half-closed SSE stream — splitting per-call removes
+ * the shared-state failure mode entirely. Cost: +1 init handshake per call,
+ * negligible against the LLM round-trip.
+ *
+ * For batched workflows like Interactive Mode's loadTopology / applyChangeset
+ * (one handler, many sequential calls), keep using `callToolLogged` with a
+ * shared client — those run serially under one user action.
+ */
+export async function callToolOneShot(
+  azionToken: string,
+  name: string,
+  args: Record<string, unknown>,
+) {
+  const { mcp, transport } = createMcpClient(azionToken);
+  try {
+    await mcp.connect(transport);
+    return await callToolLogged(mcp, name, args);
+  } finally {
+    await transport.close().catch(() => undefined);
+  }
+}
+
 export async function callToolLogged(
   mcp: McpClient,
   name: string,
