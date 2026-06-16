@@ -2,6 +2,11 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { azionFetch, runTool } from "../azion-client.js";
 
+// TODO(v4 migration): Marketplace endpoints v4 ainda não foram confirmados.
+// Probing em `/v4/marketplace/*`, `/v4/template_engine/*` e variações retornou
+// 204 (nenhuma 401), o que sugere que esses paths não existem em v4. Os
+// paths abaixo seguem na rota v3 legada e podem deixar de funcionar quando
+// o gateway aposentar v3. Revalidar com token real antes de quebrar.
 export function registerMarketplaceTools(server: McpServer) {
   server.tool(
     "azion_list_integrations",

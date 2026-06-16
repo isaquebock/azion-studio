@@ -16,7 +16,7 @@ import { layoutGraph } from "./layout";
 import { useTopology } from "./use-topology";
 import { useChangeSet } from "./use-change-set";
 import type {
-  DomainData,
+  WorkloadData,
   EdgeAppData,
   EdgeFunctionData,
   ResourceKind,
@@ -25,7 +25,7 @@ import type {
   WorkingNode,
 } from "./types";
 
-type AnyData = EdgeAppData | DomainData | EdgeFunctionData | RuleData;
+type AnyData = EdgeAppData | WorkloadData | EdgeFunctionData | RuleData;
 
 let placeholderCounter = 0;
 function newLocalId(): string {
@@ -50,9 +50,9 @@ function topologyToWorkingTree(t: Topology): WorkingNode[] {
     data: f,
     position: { x: 0, y: 0 },
   }));
-  const domains: WorkingNode[] = t.domains.map((d) => ({
+  const workloads: WorkingNode[] = t.workloads.map((d) => ({
     id: String(d.id ?? newLocalId()),
-    kind: "domain",
+    kind: "workload",
     data: d,
     position: { x: 0, y: 0 },
   }));
@@ -62,7 +62,7 @@ function topologyToWorkingTree(t: Topology): WorkingNode[] {
     data: r,
     position: { x: 0, y: 0 },
   }));
-  return [...apps, ...functions, ...domains, ...rules];
+  return [...apps, ...functions, ...workloads, ...rules];
 }
 
 /**
@@ -75,8 +75,8 @@ function isModified(node: WorkingNode, snapshot: Topology | null): boolean {
   const remote =
     node.kind === "edge_app"
       ? snapshot.apps.find((x) => x.id === id)
-      : node.kind === "domain"
-        ? snapshot.domains.find((x) => x.id === id)
+      : node.kind === "workload"
+        ? snapshot.workloads.find((x) => x.id === id)
         : node.kind === "edge_function"
           ? snapshot.functions.find((x) => x.id === id)
           : snapshot.rules.find((x) => x.id === id);
@@ -89,8 +89,8 @@ function nodeTitle(n: WorkingNode): string {
 }
 
 function nodeSubtitle(n: WorkingNode, snapshot: Topology | null): string | undefined {
-  if (n.kind === "domain") {
-    const d = n.data as DomainData;
+  if (n.kind === "workload") {
+    const d = n.data as WorkloadData;
     const appName = appNameById(d.edge_application_id, snapshot);
     return appName ? `→ ${appName}` : undefined;
   }
@@ -121,9 +121,9 @@ function defaultDataFor(kind: ResourceKind, apps: WorkingNode[]): AnyData {
   switch (kind) {
     case "edge_app":
       return { name: "Nova application", delivery_protocol: "http,https" };
-    case "domain":
+    case "workload":
       return {
-        name: "novo-dominio",
+        name: "novo-workload",
         edge_application_id: firstAppId.startsWith("new-") ? firstAppId : Number(firstAppId) || "",
         cnames: [],
         cname_access_only: false,
@@ -169,8 +169,8 @@ export function InteractiveMode() {
     }));
     const tmpEdges: Edge[] = [];
     for (const n of raw) {
-      if (n.kind === "domain") {
-        const t = String((n.data as DomainData).edge_application_id ?? "");
+      if (n.kind === "workload") {
+        const t = String((n.data as WorkloadData).edge_application_id ?? "");
         if (t) tmpEdges.push({ id: `e-${n.id}-${t}`, source: t, target: n.id });
       }
       if (n.kind === "rule") {
@@ -206,8 +206,8 @@ export function InteractiveMode() {
     }));
     const es: Edge[] = [];
     for (const node of workingTree) {
-      if (node.kind === "domain") {
-        const target = String((node.data as DomainData).edge_application_id ?? "");
+      if (node.kind === "workload") {
+        const target = String((node.data as WorkloadData).edge_application_id ?? "");
         if (target) es.push({ id: `e-${node.id}-${target}`, source: target, target: node.id });
       }
       if (node.kind === "rule") {
@@ -247,7 +247,7 @@ export function InteractiveMode() {
   /**
    * Edges are not stored directly — they reflect FKs on Domain / Rule. So
    * "connecting" two nodes means setting the target's foreign key:
-   *   - app → domain : set domain.edge_application_id = app.id
+   *   - app → workload : set workload.edge_application_id = app.id
    *   - app → rule   : set rule.application_id      = app.id
    * Anything else is rejected by isValidConnection upstream.
    */
@@ -263,10 +263,10 @@ export function InteractiveMode() {
 
       return prev.map((n) => {
         if (n.id !== target.id) return n;
-        if (n.kind === "domain") {
+        if (n.kind === "workload") {
           return {
             ...n,
-            data: { ...(n.data as DomainData), edge_application_id: sourceId },
+            data: { ...(n.data as WorkloadData), edge_application_id: sourceId },
           };
         }
         if (n.kind === "rule") {
@@ -291,8 +291,8 @@ export function InteractiveMode() {
     const removedIds = new Set(removed.map((r) => r.id));
     setWorkingTree((prev) =>
       prev.map((n) => {
-        if (n.kind === "domain") {
-          const d = n.data as DomainData;
+        if (n.kind === "workload") {
+          const d = n.data as WorkloadData;
           const edgeId = `e-${n.id}-${String(d.edge_application_id ?? "")}`;
           if (removedIds.has(edgeId)) {
             return { ...n, data: { ...d, edge_application_id: "" } };
@@ -316,7 +316,7 @@ export function InteractiveMode() {
       const target = workingTree.find((n) => n.id === conn.target);
       if (!source || !target) return false;
       if (source.kind !== "edge_app") return false;
-      return target.kind === "domain" || target.kind === "rule";
+      return target.kind === "workload" || target.kind === "rule";
     },
     [workingTree],
   );
@@ -375,7 +375,7 @@ export function InteractiveMode() {
 
   const noAppsAvailable = apps.length === 0;
   const paletteDisabled = noAppsAvailable
-    ? new Set<ResourceKind>(["domain", "rule"])
+    ? new Set<ResourceKind>(["workload", "rule"])
     : undefined;
 
   return (

@@ -1,13 +1,16 @@
-import type OpenAI from "openai";
 import { Client as McpClient } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { env } from "./env.js";
 
-type Tool = OpenAI.Chat.Completions.ChatCompletionTool;
+export type McpTool = {
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+};
 
-let cached: Promise<Tool[]> | null = null;
+let cached: Promise<McpTool[]> | null = null;
 
-async function fetchTools(): Promise<Tool[]> {
+async function fetchTools(): Promise<McpTool[]> {
   const mcp = new McpClient({ name: "azion-studio-host-bootstrap", version: "0.1.0" });
   const transport = new StreamableHTTPClientTransport(new URL(env.mcpServerUrl), {
     // O MCP server exige Authorization, mas tools/list não usa o token (apenas tools/call usa).
@@ -22,19 +25,16 @@ async function fetchTools(): Promise<Tool[]> {
       `[mcp] listTools count=${list.tools.length} ${(performance.now() - start).toFixed(1)}ms`,
     );
     return list.tools.map((t) => ({
-      type: "function",
-      function: {
-        name: t.name,
-        description: t.description ?? "",
-        parameters: (t.inputSchema ?? { type: "object", properties: {} }) as Record<string, unknown>,
-      },
+      name: t.name,
+      description: t.description ?? "",
+      inputSchema: (t.inputSchema ?? { type: "object", properties: {} }) as Record<string, unknown>,
     }));
   } finally {
     await transport.close().catch(() => undefined);
   }
 }
 
-export function getTools(): Promise<Tool[]> {
+export function getTools(): Promise<McpTool[]> {
   if (!cached) {
     cached = fetchTools().catch((err) => {
       cached = null; // tenta de novo no próximo request
@@ -60,7 +60,7 @@ export function createMcpClient(azionToken: string) {
 
 export async function resolveToolName(requested: string): Promise<string | null> {
   const tools = await getTools();
-  const names = tools.map((t) => t.function.name);
+  const names = tools.map((t) => t.name);
   if (names.includes(requested)) return requested;
 
   // Modelos às vezes esquecem o prefixo (`list_applications` em vez de `azion_list_applications`).

@@ -3,11 +3,11 @@ import type { Change } from "./types.js";
 /**
  * Order changes so dependencies are satisfied before dependents:
  *
- *   1. create edge_app          (apps are referenced by domains and rules)
+ *   1. create edge_app          (apps are referenced by workloads and rules)
  *   2. create edge_function     (independent, but conventionally first)
- *   3. create domain / rule     (depend on app id)
+ *   3. create workload / rule   (depend on app id)
  *   4. update *
- *   5. delete domain / rule     (drop dependents first)
+ *   5. delete workload / rule   (drop dependents first)
  *   6. delete edge_function
  *   7. delete edge_app          (drop last)
  *
@@ -17,9 +17,9 @@ import type { Change } from "./types.js";
 const ORDER: Array<(c: Change) => boolean> = [
   (c) => c.op === "create" && c.kind === "edge_app",
   (c) => c.op === "create" && c.kind === "edge_function",
-  (c) => c.op === "create" && (c.kind === "domain" || c.kind === "rule"),
+  (c) => c.op === "create" && (c.kind === "workload" || c.kind === "rule"),
   (c) => c.op === "update",
-  (c) => c.op === "delete" && (c.kind === "domain" || c.kind === "rule"),
+  (c) => c.op === "delete" && (c.kind === "workload" || c.kind === "rule"),
   (c) => c.op === "delete" && c.kind === "edge_function",
   (c) => c.op === "delete" && c.kind === "edge_app",
 ];

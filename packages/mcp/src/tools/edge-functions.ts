@@ -5,20 +5,20 @@ import { azionFetch, runTool } from "../azion-client.js";
 export function registerEdgeFunctionTools(server: McpServer) {
   server.tool(
     "azion_list_functions",
-    "Lista todas as edge functions da conta.",
+    "Lista todas as functions da conta.",
     {
       page: z.number().int().positive().optional(),
       page_size: z.number().int().positive().max(100).optional(),
     },
     async ({ page = 1, page_size = 10 }) =>
-      runTool(() => azionFetch("/edge_functions", { query: { page, page_size } })),
+      runTool(() => azionFetch("/v4/workspace/functions", { query: { page, page_size } })),
   );
 
   server.tool(
     "azion_get_function",
     "Detalha uma edge function por ID.",
     { function_id: z.union([z.number(), z.string()]) },
-    async ({ function_id }) => runTool(() => azionFetch(`/edge_functions/${function_id}`)),
+    async ({ function_id }) => runTool(() => azionFetch(`/v4/workspace/functions/${function_id}`)),
   );
 
   server.tool(
@@ -31,7 +31,7 @@ export function registerEdgeFunctionTools(server: McpServer) {
       initiator_type: z.string().optional(),
       json_args: z.record(z.unknown()).optional(),
     },
-    async (body) => runTool(() => azionFetch("/edge_functions", { method: "POST", body })),
+    async (body) => runTool(() => azionFetch("/v4/workspace/functions", { method: "POST", body })),
   );
 
   server.tool(
@@ -45,7 +45,7 @@ export function registerEdgeFunctionTools(server: McpServer) {
       active: z.boolean().optional(),
     },
     async ({ function_id, ...patch }) =>
-      runTool(() => azionFetch(`/edge_functions/${function_id}`, { method: "PATCH", body: patch })),
+      runTool(() => azionFetch(`/v4/workspace/functions/${function_id}`, { method: "PATCH", body: patch })),
   );
 
   server.tool(
@@ -53,6 +53,6 @@ export function registerEdgeFunctionTools(server: McpServer) {
     "Remove uma edge function. Operação destrutiva.",
     { function_id: z.union([z.number(), z.string()]) },
     async ({ function_id }) =>
-      runTool(() => azionFetch(`/edge_functions/${function_id}`, { method: "DELETE" })),
+      runTool(() => azionFetch(`/v4/workspace/functions/${function_id}`, { method: "DELETE" })),
   );
 }

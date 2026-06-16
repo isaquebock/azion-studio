@@ -1,7 +1,7 @@
 import type { Client as McpClient } from "@modelcontextprotocol/sdk/client/index.js";
 import { callToolLogged } from "../mcp-tools.js";
 import { sortChanges } from "./dependency-sort.js";
-import type { ApplyEvent, Change, DomainData, EdgeAppData, EdgeFunctionData, RuleData } from "./types.js";
+import type { ApplyEvent, Change, WorkloadData, EdgeAppData, EdgeFunctionData, RuleData } from "./types.js";
 
 /**
  * Maps an MCP tool result to its `data.id` so a created resource can be
@@ -26,8 +26,8 @@ function extractCreatedId(result: unknown): number | undefined {
  */
 function rewriteReferences(remaining: Change[], localId: string, realId: number) {
   for (const c of remaining) {
-    if (c.op === "create" && c.kind === "domain") {
-      const d = c.data as DomainData;
+    if (c.op === "create" && c.kind === "workload") {
+      const d = c.data as WorkloadData;
       if (d.edge_application_id === localId) d.edge_application_id = realId;
     }
     if (c.op === "create" && c.kind === "rule") {
@@ -58,9 +58,9 @@ async function runChange(mcp: McpClient, change: Change): Promise<number | undef
         });
         return extractCreatedId(res);
       }
-      if (change.kind === "domain") {
-        const d = change.data as DomainData;
-        const res = await callToolLogged(mcp, "azion_create_domain", {
+      if (change.kind === "workload") {
+        const d = change.data as WorkloadData;
+        const res = await callToolLogged(mcp, "azion_create_workload", {
           name: d.name,
           edge_application_id: d.edge_application_id,
           cnames: d.cnames,
@@ -97,10 +97,10 @@ async function runChange(mcp: McpClient, change: Change): Promise<number | undef
           name: d.name,
           code: d.code,
         });
-      } else if (change.kind === "domain") {
-        const d = change.after as DomainData;
-        await callToolLogged(mcp, "azion_update_domain", {
-          domain_id: change.id,
+      } else if (change.kind === "workload") {
+        const d = change.after as WorkloadData;
+        await callToolLogged(mcp, "azion_update_workload", {
+          workload_id: change.id,
           name: d.name,
           cnames: d.cnames,
         });
@@ -118,8 +118,8 @@ async function runChange(mcp: McpClient, change: Change): Promise<number | undef
     case "delete": {
       if (change.kind === "edge_function") {
         await callToolLogged(mcp, "azion_delete_function", { function_id: change.id });
-      } else if (change.kind === "domain") {
-        await callToolLogged(mcp, "azion_delete_domain", { domain_id: change.id });
+      } else if (change.kind === "workload") {
+        await callToolLogged(mcp, "azion_delete_workload", { workload_id: change.id });
       } else if (change.kind === "rule") {
         const before = change.before as RuleData;
         await callToolLogged(mcp, "azion_delete_rule", {

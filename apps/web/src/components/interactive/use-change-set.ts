@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type {
   Change,
-  DomainData,
+  WorkloadData,
   EdgeAppData,
   EdgeFunctionData,
   ResourceKind,
@@ -10,7 +10,7 @@ import type {
   WorkingNode,
 } from "./types";
 
-type AnyData = EdgeAppData | DomainData | EdgeFunctionData | RuleData;
+type AnyData = EdgeAppData | WorkloadData | EdgeFunctionData | RuleData;
 
 /**
  * Pull a working-node's id as a number if it represents an existing remote
@@ -36,7 +36,7 @@ function lookupSnapshot(
   id: number,
 ): AnyData | undefined {
   if (kind === "edge_app") return topology.apps.find((a) => a.id === id);
-  if (kind === "domain") return topology.domains.find((d) => d.id === id);
+  if (kind === "workload") return topology.workloads.find((d) => d.id === id);
   if (kind === "edge_function") return topology.functions.find((f) => f.id === id);
   if (kind === "rule") return topology.rules.find((r) => r.id === id);
   return undefined;

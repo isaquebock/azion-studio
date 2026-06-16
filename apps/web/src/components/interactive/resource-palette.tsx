@@ -4,7 +4,7 @@ import type { ResourceKind } from "./types";
 
 const ITEMS: Array<{ kind: ResourceKind; label: string; Icon: typeof Globe2 }> = [
   { kind: "edge_app", label: "Application", Icon: Layers },
-  { kind: "domain", label: "Domain", Icon: Globe2 },
+  { kind: "workload", label: "Workload", Icon: Globe2 },
   { kind: "edge_function", label: "Function", Icon: Code2 },
   { kind: "rule", label: "Rule", Icon: GitBranch },
 ];
@@ -41,7 +41,7 @@ export function ResourcePalette({ onAdd, disabledKinds }: Props) {
         );
       })}
       <p className="mt-2 px-1 text-[11px] text-muted-foreground">
-        Domains e Rules precisam de uma Application como destino.
+        Workloads e Rules precisam de uma Application como destino.
       </p>
     </aside>
   );

@@ -19,7 +19,7 @@ type Props = {
 function describe(change: Change): string {
   const kindLabel: Record<Change["kind"], string> = {
     edge_app: "Application",
-    domain: "Domain",
+    workload: "Workload",
     edge_function: "Function",
     rule: "Rule",
   };

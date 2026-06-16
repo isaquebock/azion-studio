@@ -17,6 +17,12 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@3.25.76)
+      '@tanstack/ai':
+        specifier: ^0.29.0
+        version: 0.29.0
+      '@tanstack/ai-openrouter':
+        specifier: ^0.13.2
+        version: 0.13.2(@tanstack/ai@0.29.0)
       cors:
         specifier: ^2.8.5
         version: 2.8.6
@@ -63,6 +69,15 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.1.0
         version: 1.3.0(@types/react@18.3.31)(react@18.3.1)
+      '@tanstack/ai':
+        specifier: ^0.29.0
+        version: 0.29.0
+      '@tanstack/ai-client':
+        specifier: ^0.17.0
+        version: 0.17.0
+      '@tanstack/ai-react':
+        specifier: ^0.15.5
+        version: 0.15.5(@tanstack/ai@0.29.0)(@types/react@18.3.31)(react@18.3.1)
       '@xyflow/react':
         specifier: ^12.11.0
         version: 12.11.0(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -157,6 +172,9 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@ag-ui/core@0.0.52':
+    resolution: {integrity: sha512-Xo0bUaNV56EqylzcrAuhUkQX7et7+SZIrqZZtEByGwEq/I1EHny6ZMkWHLkKR7UNi0FJZwJyhKYmKJS3B2SEgA==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -1463,6 +1481,9 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@openrouter/sdk@0.12.35':
+    resolution: {integrity: sha512-s4QVLLnG1AmfW3TjnnHUqGfsCkzwVK+kboGcZmKbde09m1DPqgzl4RUFt/HJ5v97MX8aEaN0UG3mKv2S+qj2Gw==}
+
   '@oxc-parser/binding-android-arm64@0.76.0':
     resolution: {integrity: sha512-1XJW/16CDmF5bHE7LAyPPmEEVnxSadDgdJz+xiLqBrmC4lfAeuAfRw3HlOygcPGr+AJsbD4Z5sFJMkwjbSZlQg==}
     engines: {node: '>=20.0.0'}
@@ -1878,6 +1899,46 @@ packages:
     resolution: {integrity: sha512-5L+T1fMX4RIEBoZzT0+sQ0PhTS36NULFmMXtl1TZo44TMAROIMHbZufSOjVWt/Y622BtxgxtaNOokbTDvfsrZA==}
     cpu: [x64]
     os: [win32]
+
+  '@standard-schema/spec@1.1.0':
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@tanstack/ai-client@0.17.0':
+    resolution: {integrity: sha512-Qc/5xoj0nO6DHfLiJTtpY7ZU8ZCTTvTwh3SJe0Ux6Vt50PdH9UecoOWOA6S4u1O2yPQSyE2EPLbbACtEX5fhvw==}
+
+  '@tanstack/ai-event-client@0.6.0':
+    resolution: {integrity: sha512-8ZqQo0JiRwZ0letOZ/KrOCd8kpPG2K0iWGfaPjjt+S2AtglRwUJ/TlQDhBW8R5m296Pywp1G3Bdf0n3cP2njoA==}
+    peerDependencies:
+      '@tanstack/ai': 0.29.0
+
+  '@tanstack/ai-openrouter@0.13.2':
+    resolution: {integrity: sha512-t6uMtQF+p3WEV0xlIyBs94cbpzjIVs5uHawE5LZxFQ4pDFIUmdyANUVXVsSde7XgWbgohXCRW9eofMj0voqixA==}
+    peerDependencies:
+      '@tanstack/ai': ^0.29.0
+
+  '@tanstack/ai-react@0.15.5':
+    resolution: {integrity: sha512-xtAGYeKDSs/JoMuP035kTvrR+JBzgZb8o5BQb3pD5n7pUNb4A0bdzfccY3Pv8P381W46AtP4DL4LTlqfmo/1+w==}
+    peerDependencies:
+      '@tanstack/ai': ^0.29.0
+      '@types/react': '>=18.0.0'
+      react: '>=18.0.0'
+
+  '@tanstack/ai-utils@0.2.1':
+    resolution: {integrity: sha512-cFsSeaiAOOEtAOWvFWD0jHiLlFSYi+FYmbEPeD70zHntM8ws2YFb4Dgz94+J8rsoffLXIFTkKswTowx5QlTsWg==}
+
+  '@tanstack/ai@0.29.0':
+    resolution: {integrity: sha512-BnwFuQ3yFPg4oANMuTFh58aKyQU+KQKr6L0EMmJzuum/9X8Q1DM4cO/tkpxtW959fvnH6Pm7Q7BSge48b+LapQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.9.0'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+
+  '@tanstack/devtools-event-client@0.4.3':
+    resolution: {integrity: sha512-OZI6QyULw0FI0wjgmeYzCIfbgPsOEzwJtCpa69XrfLMtNXLGnz3d/dIabk7frg0TmHo+Ah49w5I4KC7Tufwsvw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
@@ -3584,6 +3645,9 @@ packages:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
     engines: {node: '>= 0.8'}
 
+  partial-json@0.1.7:
+    resolution: {integrity: sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==}
+
   path-exists@3.0.0:
     resolution: {integrity: sha512-bpC7GYwiDYQ4wYLe+FA8lhRjhQCMcQGuSgGGqDkg/QerRWw9CmGRT0iSOVRSZJ29NMLZgIzqaljJ63oaL4NIJQ==}
     engines: {node: '>=4'}
@@ -4417,6 +4481,10 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@ag-ui/core@0.0.52':
+    dependencies:
+      zod: 3.25.76
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -5686,6 +5754,10 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
+  '@openrouter/sdk@0.12.35':
+    dependencies:
+      zod: 3.25.76
+
   '@oxc-parser/binding-android-arm64@0.76.0':
     optional: true
 
@@ -5978,6 +6050,46 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.62.0':
     optional: true
+
+  '@standard-schema/spec@1.1.0': {}
+
+  '@tanstack/ai-client@0.17.0':
+    dependencies:
+      '@tanstack/ai': 0.29.0
+      '@tanstack/ai-event-client': 0.6.0(@tanstack/ai@0.29.0)
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+
+  '@tanstack/ai-event-client@0.6.0(@tanstack/ai@0.29.0)':
+    dependencies:
+      '@tanstack/ai': 0.29.0
+      '@tanstack/devtools-event-client': 0.4.3
+
+  '@tanstack/ai-openrouter@0.13.2(@tanstack/ai@0.29.0)':
+    dependencies:
+      '@openrouter/sdk': 0.12.35
+      '@tanstack/ai': 0.29.0
+      '@tanstack/ai-utils': 0.2.1
+
+  '@tanstack/ai-react@0.15.5(@tanstack/ai@0.29.0)(@types/react@18.3.31)(react@18.3.1)':
+    dependencies:
+      '@tanstack/ai': 0.29.0
+      '@tanstack/ai-client': 0.17.0
+      '@types/react': 18.3.31
+      react: 18.3.1
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+
+  '@tanstack/ai-utils@0.2.1': {}
+
+  '@tanstack/ai@0.29.0':
+    dependencies:
+      '@ag-ui/core': 0.0.52
+      '@standard-schema/spec': 1.1.0
+      '@tanstack/ai-event-client': 0.6.0(@tanstack/ai@0.29.0)
+      partial-json: 0.1.7
+
+  '@tanstack/devtools-event-client@0.4.3': {}
 
   '@tybys/wasm-util@0.10.2':
     dependencies:
@@ -8150,6 +8262,8 @@ snapshots:
       lines-and-columns: 1.2.4
 
   parseurl@1.3.3: {}
+
+  partial-json@0.1.7: {}
 
   path-exists@3.0.0: {}
 

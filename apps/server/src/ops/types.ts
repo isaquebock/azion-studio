@@ -1,7 +1,7 @@
 // Shared types for /api/ops/* — kept in sync manually with the frontend copy
 // at apps/web/src/components/interactive/types.ts. Small surface, low churn.
 
-export type ResourceKind = "edge_app" | "domain" | "edge_function" | "rule";
+export type ResourceKind = "edge_app" | "workload" | "edge_function" | "rule";
 
 export type EdgeAppData = {
   id?: number;
@@ -11,7 +11,7 @@ export type EdgeAppData = {
   raw?: unknown;
 };
 
-export type DomainData = {
+export type WorkloadData = {
   id?: number;
   name: string;
   cname_access_only?: boolean;
@@ -45,13 +45,13 @@ export type RuleData = {
 
 export type ResourceData =
   | { kind: "edge_app"; data: EdgeAppData }
-  | { kind: "domain"; data: DomainData }
+  | { kind: "workload"; data: WorkloadData }
   | { kind: "edge_function"; data: EdgeFunctionData }
   | { kind: "rule"; data: RuleData };
 
 export type Topology = {
   apps: EdgeAppData[];
-  domains: DomainData[];
+  workloads: WorkloadData[];
   functions: EdgeFunctionData[];
   rules: RuleData[];
 };
@@ -63,8 +63,8 @@ export type Change =
 
 export type ResourceFor<K extends ResourceKind> = K extends "edge_app"
   ? EdgeAppData
-  : K extends "domain"
-    ? DomainData
+  : K extends "workload"
+    ? WorkloadData
     : K extends "edge_function"
       ? EdgeFunctionData
       : K extends "rule"

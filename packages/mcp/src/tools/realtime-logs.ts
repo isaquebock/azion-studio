@@ -11,14 +11,14 @@ export function registerRealtimeLogsTools(server: McpServer) {
       page_size: z.number().int().positive().max(100).optional(),
     },
     async ({ page = 1, page_size = 10 }) =>
-      runTool(() => azionFetch("/data_streaming/streamings", { query: { page, page_size } })),
+      runTool(() => azionFetch("/v4/data_stream/streams", { query: { page, page_size } })),
   );
 
   server.tool(
     "azion_get_data_stream",
     "Detalha um data stream por ID.",
     { stream_id: z.union([z.number(), z.string()]) },
-    async ({ stream_id }) => runTool(() => azionFetch(`/data_streaming/streamings/${stream_id}`)),
+    async ({ stream_id }) => runTool(() => azionFetch(`/v4/data_stream/streams/${stream_id}`)),
   );
 
   server.tool(
@@ -33,6 +33,6 @@ export function registerRealtimeLogsTools(server: McpServer) {
       active: z.boolean().optional(),
     },
     async (body) =>
-      runTool(() => azionFetch("/data_streaming/streamings", { method: "POST", body })),
+      runTool(() => azionFetch("/v4/data_stream/streams", { method: "POST", body })),
   );
 }

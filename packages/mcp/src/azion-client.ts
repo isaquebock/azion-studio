@@ -18,8 +18,8 @@ export async function azionFetch(path: string, init: AzionFetchInit = {}): Promi
     }
   }
   const headers: Record<string, string> = {
-    Authorization: `Token ${token}`,
-    Accept: init.accept ?? "application/json; version=3",
+    Authorization: `Bearer ${token}`,
+    Accept: init.accept ?? "application/json",
   };
   if (init.body !== undefined) headers["Content-Type"] = "application/json";
 

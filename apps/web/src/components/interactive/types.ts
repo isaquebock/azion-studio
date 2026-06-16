@@ -1,6 +1,6 @@
 // Mirror of apps/server/src/ops/types.ts. Kept in sync by hand — small surface.
 
-export type ResourceKind = "edge_app" | "domain" | "edge_function" | "rule";
+export type ResourceKind = "edge_app" | "workload" | "edge_function" | "rule";
 
 export type EdgeAppData = {
   id?: number;
@@ -10,7 +10,7 @@ export type EdgeAppData = {
   raw?: unknown;
 };
 
-export type DomainData = {
+export type WorkloadData = {
   id?: number;
   name: string;
   cname_access_only?: boolean;
@@ -42,8 +42,8 @@ export type RuleData = {
 
 export type ResourceFor<K extends ResourceKind> = K extends "edge_app"
   ? EdgeAppData
-  : K extends "domain"
-    ? DomainData
+  : K extends "workload"
+    ? WorkloadData
     : K extends "edge_function"
       ? EdgeFunctionData
       : K extends "rule"
@@ -52,7 +52,7 @@ export type ResourceFor<K extends ResourceKind> = K extends "edge_app"
 
 export type Topology = {
   apps: EdgeAppData[];
-  domains: DomainData[];
+  workloads: WorkloadData[];
   functions: EdgeFunctionData[];
   rules: RuleData[];
 };
@@ -67,14 +67,14 @@ export type Topology = {
 export type WorkingNode = {
   id: string;
   kind: ResourceKind;
-  data: EdgeAppData | DomainData | EdgeFunctionData | RuleData;
+  data: EdgeAppData | WorkloadData | EdgeFunctionData | RuleData;
   position: { x: number; y: number };
 };
 
 export type Change =
-  | { op: "create"; kind: ResourceKind; localId: string; data: EdgeAppData | DomainData | EdgeFunctionData | RuleData }
-  | { op: "update"; kind: ResourceKind; id: number; before: EdgeAppData | DomainData | EdgeFunctionData | RuleData; after: EdgeAppData | DomainData | EdgeFunctionData | RuleData }
-  | { op: "delete"; kind: ResourceKind; id: number; before: EdgeAppData | DomainData | EdgeFunctionData | RuleData };
+  | { op: "create"; kind: ResourceKind; localId: string; data: EdgeAppData | WorkloadData | EdgeFunctionData | RuleData }
+  | { op: "update"; kind: ResourceKind; id: number; before: EdgeAppData | WorkloadData | EdgeFunctionData | RuleData; after: EdgeAppData | WorkloadData | EdgeFunctionData | RuleData }
+  | { op: "delete"; kind: ResourceKind; id: number; before: EdgeAppData | WorkloadData | EdgeFunctionData | RuleData };
 
 export type ApplyEvent =
   | { type: "progress"; index: number; total: number; change: Change; status: "running" }

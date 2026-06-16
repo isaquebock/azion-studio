@@ -18,7 +18,7 @@ import { ResourceNode } from "./nodes/resource-node";
 
 const NODE_TYPES = {
   edge_app: ResourceNode,
-  domain: ResourceNode,
+  workload: ResourceNode,
   edge_function: ResourceNode,
   rule: ResourceNode,
 };
@@ -51,7 +51,7 @@ export function Canvas({
     [],
   );
 
-  // Block self-loops outright; semantic rules (only app→domain/rule) come from
+  // Block self-loops outright; semantic rules (only app→workload/rule) come from
   // the parent via isValidConnection.
   const onBeforeConnect = (c: Connection) => c.source !== c.target;
 

@@ -16,7 +16,7 @@ export function registerRulesEngineTools(server: McpServer) {
     },
     async ({ application_id, phase, page = 1, page_size = 10 }) =>
       runTool(() =>
-        azionFetch(`/edge_applications/${application_id}/rules_engine/${phase}/rules`, {
+        azionFetch(`/v4/workspace/applications/${application_id}/${phase}_rules`, {
           query: { page, page_size },
         }),
       ),
@@ -32,7 +32,7 @@ export function registerRulesEngineTools(server: McpServer) {
     },
     async ({ application_id, phase, rule_id }) =>
       runTool(() =>
-        azionFetch(`/edge_applications/${application_id}/rules_engine/${phase}/rules/${rule_id}`),
+        azionFetch(`/v4/workspace/applications/${application_id}/${phase}_rules/${rule_id}`),
       ),
   );
 
@@ -50,7 +50,7 @@ export function registerRulesEngineTools(server: McpServer) {
     },
     async ({ application_id, phase, ...body }) =>
       runTool(() =>
-        azionFetch(`/edge_applications/${application_id}/rules_engine/${phase}/rules`, {
+        azionFetch(`/v4/workspace/applications/${application_id}/${phase}_rules`, {
           method: "POST",
           body,
         }),
@@ -71,7 +71,7 @@ export function registerRulesEngineTools(server: McpServer) {
     },
     async ({ application_id, phase, rule_id, ...patch }) =>
       runTool(() =>
-        azionFetch(`/edge_applications/${application_id}/rules_engine/${phase}/rules/${rule_id}`, {
+        azionFetch(`/v4/workspace/applications/${application_id}/${phase}_rules/${rule_id}`, {
           method: "PATCH",
           body: patch,
         }),
@@ -88,7 +88,7 @@ export function registerRulesEngineTools(server: McpServer) {
     },
     async ({ application_id, phase, rule_id }) =>
       runTool(() =>
-        azionFetch(`/edge_applications/${application_id}/rules_engine/${phase}/rules/${rule_id}`, {
+        azionFetch(`/v4/workspace/applications/${application_id}/${phase}_rules/${rule_id}`, {
           method: "DELETE",
         }),
       ),

@@ -1,7 +1,7 @@
 import type { Client as McpClient } from "@modelcontextprotocol/sdk/client/index.js";
 import { callToolLogged } from "../mcp-tools.js";
 import type {
-  DomainData,
+  WorkloadData,
   EdgeAppData,
   EdgeFunctionData,
   RuleData,
@@ -70,7 +70,7 @@ function toEdgeApp(raw: unknown): EdgeAppData {
   };
 }
 
-function toDomain(raw: unknown): DomainData {
+function toWorkload(raw: unknown): WorkloadData {
   const r = raw as Record<string, unknown>;
   return {
     id: Number(r.id),
@@ -111,14 +111,14 @@ function toRule(raw: unknown, application_id: number, phase: "request" | "respon
 }
 
 export async function loadTopology(mcp: McpClient): Promise<Topology> {
-  // Apps, domains and functions are independent — fetch in parallel,
+  // Apps, workloads and functions are independent — fetch in parallel,
   // each one walking pagination internally.
-  const [appsRaw, domainsRaw, functionsRaw] = await Promise.all([
+  const [appsRaw, workloadsRaw, functionsRaw] = await Promise.all([
     listAll("azion_list_applications", {}, (args) =>
       callToolLogged(mcp, "azion_list_applications", args),
     ),
-    listAll("azion_list_domains", {}, (args) =>
-      callToolLogged(mcp, "azion_list_domains", args),
+    listAll("azion_list_workloads", {}, (args) =>
+      callToolLogged(mcp, "azion_list_workloads", args),
     ),
     listAll("azion_list_functions", {}, (args) =>
       callToolLogged(mcp, "azion_list_functions", args),
@@ -126,7 +126,7 @@ export async function loadTopology(mcp: McpClient): Promise<Topology> {
   ]);
 
   const apps = appsRaw.map(toEdgeApp);
-  const domains = domainsRaw.map(toDomain);
+  const workloads = workloadsRaw.map(toWorkload);
   const functions = functionsRaw.map(toFunction);
 
   // Rules require an application_id + phase. v1 fetches the request phase for
@@ -147,5 +147,5 @@ export async function loadTopology(mcp: McpClient): Promise<Topology> {
   );
   const rules = ruleResults.flat();
 
-  return { apps, domains, functions, rules };
+  return { apps, workloads, functions, rules };
 }

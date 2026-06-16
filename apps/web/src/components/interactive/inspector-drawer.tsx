@@ -3,7 +3,7 @@ import { Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import type {
-  DomainData,
+  WorkloadData,
   EdgeAppData,
   EdgeFunctionData,
   RuleData,
@@ -55,7 +55,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
 
   const isExisting = !draft.id.startsWith("new-");
 
-  function updateData<K extends keyof (EdgeAppData & DomainData & EdgeFunctionData & RuleData)>(
+  function updateData<K extends keyof (EdgeAppData & WorkloadData & EdgeFunctionData & RuleData)>(
     key: K,
     value: unknown,
   ) {
@@ -66,7 +66,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
 
   const kindLabel: Record<typeof draft.kind, string> = {
     edge_app: "Application",
-    domain: "Domain",
+    workload: "Workload",
     edge_function: "Function",
     rule: "Rule",
   };
@@ -152,12 +152,12 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
               </div>
             )}
 
-            {draft.kind === "domain" && (
+            {draft.kind === "workload" && (
               <>
                 <div>
                   <Label>Application</Label>
                   <select
-                    value={String((draft.data as DomainData).edge_application_id ?? "")}
+                    value={String((draft.data as WorkloadData).edge_application_id ?? "")}
                     onChange={(e) => updateData("edge_application_id", parseAppId(e.target.value))}
                     className={inputClasses()}
                   >
@@ -172,7 +172,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
                 <div>
                   <Label>CNAMEs (um por linha)</Label>
                   <textarea
-                    value={((draft.data as DomainData).cnames ?? []).join("\n")}
+                    value={((draft.data as WorkloadData).cnames ?? []).join("\n")}
                     onChange={(e) =>
                       updateData(
                         "cnames",

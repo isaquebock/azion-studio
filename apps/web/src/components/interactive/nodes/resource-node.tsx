@@ -15,7 +15,7 @@ const CONFIG: Record<
   { Icon: typeof Globe2; label: string }
 > = {
   edge_app: { Icon: Layers, label: "Application" },
-  domain: { Icon: Globe2, label: "Domain" },
+  workload: { Icon: Globe2, label: "Workload" },
   edge_function: { Icon: Code2, label: "Function" },
   rule: { Icon: GitBranch, label: "Rule" },
 };
