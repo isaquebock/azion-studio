@@ -240,13 +240,13 @@ export function ChatInterface() {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
         <div className="w-full max-w-[720px]">
-          <h1 className="mb-8 text-center text-3xl font-semibold tracking-tight sm:text-4xl">
-            Como posso ajudar com sua{" "}
-            <span className="text-primary">conta Azion</span>?
+          <h1 className="mb-8 text-center text-3xl font-light tracking-tight sm:text-4xl">
+            Converse com sua{" "}
+            <span className="font-normal text-primary">conta Azion</span>.
           </h1>
           {composer}
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Ex.: <em>“liste minhas edge applications”</em>
+            Ex.: <em>“liste minhas applications”</em>
           </p>
         </div>
         <ConfirmDialog request={confirmReq} />

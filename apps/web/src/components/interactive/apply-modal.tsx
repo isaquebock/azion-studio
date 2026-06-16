@@ -18,9 +18,9 @@ type Props = {
 
 function describe(change: Change): string {
   const kindLabel: Record<Change["kind"], string> = {
-    edge_app: "Edge Application",
+    edge_app: "Application",
     domain: "Domain",
-    edge_function: "Edge Function",
+    edge_function: "Function",
     rule: "Rule",
   };
   const name =
@@ -133,7 +133,7 @@ export function ApplyModal({ open, changes, onClose, onSuccess }: Props) {
         <Dialog.Content className="fixed left-1/2 top-1/2 z-50 flex max-h-[80vh] w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl border border-border bg-background shadow-popover">
           <header className="flex items-center justify-between border-b border-border px-5 py-4">
             <div>
-              <Dialog.Title className="text-sm font-semibold">
+              <Dialog.Title className="text-sm font-medium">
                 Apply {changes.length} change{changes.length === 1 ? "" : "s"}
               </Dialog.Title>
               <Dialog.Description className="text-xs text-muted-foreground">
@@ -165,7 +165,7 @@ export function ApplyModal({ open, changes, onClose, onSuccess }: Props) {
                   <span className="w-4 text-muted-foreground">{i + 1}.</span>
                   <StatusIcon status={s} />
                   <span className="flex-1 truncate">{describe(c)}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                     {s}
                   </span>
                 </li>

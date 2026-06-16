@@ -380,6 +380,12 @@ export function InteractiveMode() {
 
   return (
     <div className="flex h-full w-full flex-col">
+      <div className="border-b border-border bg-background px-4 pb-5 pt-6 text-center">
+        <h1 className="text-2xl font-light tracking-tight sm:text-3xl">
+          Orquestre sua{" "}
+          <span className="font-normal text-primary">conta Azion</span>.
+        </h1>
+      </div>
       <div className="flex items-center justify-between border-b border-border bg-background/80 px-4 py-2">
         <button
           type="button"

@@ -3,9 +3,9 @@ import { cn } from "@/lib/utils";
 import type { ResourceKind } from "./types";
 
 const ITEMS: Array<{ kind: ResourceKind; label: string; Icon: typeof Globe2 }> = [
-  { kind: "edge_app", label: "Edge Application", Icon: Layers },
+  { kind: "edge_app", label: "Application", Icon: Layers },
   { kind: "domain", label: "Domain", Icon: Globe2 },
-  { kind: "edge_function", label: "Edge Function", Icon: Code2 },
+  { kind: "edge_function", label: "Function", Icon: Code2 },
   { kind: "rule", label: "Rule", Icon: GitBranch },
 ];
 
@@ -17,7 +17,7 @@ type Props = {
 export function ResourcePalette({ onAdd, disabledKinds }: Props) {
   return (
     <aside className="flex w-56 shrink-0 flex-col gap-2 border-r border-border bg-background/80 p-3">
-      <div className="px-1 pb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="px-1 pb-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         Add resource
       </div>
       {ITEMS.map(({ kind, label, Icon }) => {
@@ -41,7 +41,7 @@ export function ResourcePalette({ onAdd, disabledKinds }: Props) {
         );
       })}
       <p className="mt-2 px-1 text-[11px] text-muted-foreground">
-        Domains e Rules precisam de uma Edge Application como destino.
+        Domains e Rules precisam de uma Application como destino.
       </p>
     </aside>
   );

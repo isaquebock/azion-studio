@@ -14,9 +14,9 @@ const CONFIG: Record<
   ResourceKind,
   { Icon: typeof Globe2; label: string }
 > = {
-  edge_app: { Icon: Layers, label: "Edge Application" },
+  edge_app: { Icon: Layers, label: "Application" },
   domain: { Icon: Globe2, label: "Domain" },
-  edge_function: { Icon: Code2, label: "Edge Function" },
+  edge_function: { Icon: Code2, label: "Function" },
   rule: { Icon: GitBranch, label: "Rule" },
 };
 
@@ -53,18 +53,18 @@ function ResourceNodeImpl(props: NodeProps) {
         <Icon size={16} strokeWidth={2} />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
         <div className="truncate text-sm font-medium text-foreground">{data.title || "—"}</div>
         {data.subtitle ? (
           <div className="truncate text-[11px] text-muted-foreground">{data.subtitle}</div>
         ) : null}
       </div>
       {data.isNew ? (
-        <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-primary">
+        <span className="rounded-full bg-primary/20 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
           new
         </span>
       ) : data.isModified ? (
-        <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-primary">
+        <span className="rounded-full bg-primary/20 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
           edit
         </span>
       ) : null}

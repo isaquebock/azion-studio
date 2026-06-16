@@ -20,7 +20,7 @@ type Props = {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="mb-1 block text-[11px] uppercase tracking-wider text-muted-foreground">
+    <label className="mb-1 block font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
       {children}
     </label>
   );
@@ -65,9 +65,9 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
   }
 
   const kindLabel: Record<typeof draft.kind, string> = {
-    edge_app: "Edge Application",
+    edge_app: "Application",
     domain: "Domain",
-    edge_function: "Edge Function",
+    edge_function: "Function",
     rule: "Rule",
   };
 
@@ -80,7 +80,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
         >
           <header className="flex items-center justify-between border-b border-border px-5 py-4">
             <div>
-              <Dialog.Title className="text-sm font-semibold">
+              <Dialog.Title className="text-sm font-medium">
                 {kindLabel[draft.kind]}
               </Dialog.Title>
               <Dialog.Description className="text-xs text-muted-foreground">
@@ -155,7 +155,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
             {draft.kind === "domain" && (
               <>
                 <div>
-                  <Label>Edge Application</Label>
+                  <Label>Application</Label>
                   <select
                     value={String((draft.data as DomainData).edge_application_id ?? "")}
                     onChange={(e) => updateData("edge_application_id", parseAppId(e.target.value))}
@@ -206,7 +206,7 @@ export function InspectorDrawer({ node, apps, onSave, onDelete, onClose }: Props
             {draft.kind === "rule" && (
               <>
                 <div>
-                  <Label>Edge Application</Label>
+                  <Label>Application</Label>
                   <select
                     value={String((draft.data as RuleData).application_id ?? "")}
                     onChange={(e) => updateData("application_id", parseAppId(e.target.value))}

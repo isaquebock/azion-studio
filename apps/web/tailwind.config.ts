@@ -16,6 +16,15 @@ export default {
           "Roboto",
           "sans-serif",
         ],
+        mono: [
+          "Roboto Mono",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "monospace",
+        ],
       },
       colors: {
         // Surfaces
